@@ -14,20 +14,23 @@ const rootPath = require('electron-root-path').rootPath;
 function startAgent() {
   return new Promise((resolve, reject) => {
     try {
-      const location = null;
+      var location = null;
       if (process.platform == 'darwin') {
+        logdata("started");
         location = path.join(rootPath, '/Contents/Resources/com.simplifyQA.Agent.jar');
         javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml', '-jar', location]);
 
       }
       else if (process.platform == 'win32') {
-        location = path.join(rootPath, 'Resources/com.simplifyQA.Agent.jar');
+        location = path.join(rootPath, '/Resources/com.simplifyQA.Agent.jar');
         javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar', path.win32.normalize(currentPath.split("app.asar")[0] +'\\'+ 'resources\\'+'com.simplifyQA.Agent.jar')]);
 
       }
+
+
       // const location = path.join(rootPath, 'com.simplifyQA.Agent.jar');
-      logdata(location);
-      var currentPath = __dirname.toString();
+      // logdata(location);
+      // var currentPath = __dirname.toString();
 
       // javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar', path.win32.normalize(currentPath.split("app.asar")[0] +'\\'+ 'resources\\'+'com.simplifyQA.Agent.jar')]);
       // javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml', '-jar', location]);
@@ -126,6 +129,11 @@ app.whenReady().then(async () => {
       startNotification();
     }, 500);
     */
+
+    global.sharedThing = {
+      process: javaProcess.pid,
+      app: app,
+    };
   // tray = new Tray(__dirname + '\\resources\\'+'simplify logo.png')
   // logdata("tray : "+ rootPath + "/Contents/Resources/libs/images/loader_1.png")
   // tray = new Tray(path.join(rootPath, 'loader_2.png'))
@@ -147,10 +155,11 @@ app.whenReady().then(async () => {
 
     {
       label: 'Restart', type: 'normal', click: () => {
-        kill(javaProcess.pid)
+        kill(global.sharedThing.process)
         setTimeout(() => {
           startAgent();
-        }, 500);
+          global.sharedThing.process=javaProcess.pid;
+        }, 1000);
         setTimeout(() => {
           console.log("---------------start RESTART notification for tray--------------------")
           https.get("http://localhost:4012/restartnotification");
@@ -165,7 +174,7 @@ app.whenReady().then(async () => {
         //   process.kill(pid);
         // }, 3000);
         app.isQuiting = true;
-        process.kill(javaProcess.pid);
+        process.kill(global.sharedThing.process);
         app.quit();
       }
     },
