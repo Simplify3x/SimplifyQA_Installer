@@ -1,0 +1,32 @@
+image: rvancea/maven-chrome-jdk8
+
+stages:
+  - test
+  - release
+
+
+test:
+  rules:
+    - if: $CI_COMMIT_TAG !=null
+  stage: test
+  script: 
+      - mvn install -X
+      - curl  http://172.104.183.14:8799/gitlabemail  --header 'Content-Type:application/json' --data '{"jobid":"'"$CI_JOB_ID"'","project":"'"$CI_PROJECT_NAME"'","username":"'"$GITLAB_USER_NAME"'","userid":"'"$GITLAB_USER_ID"'","user_name":"'"$GITLAB_USER_LOGIN"'","project_id":"'"$CI_PROJECT_ID"'","ref":"'"$CI_COMMIT_REF_NAME"'","email":"'"$GITLAB_USER_EMAIL"'"}'
+
+  artifacts:
+    paths:
+      - target/*.jar
+
+  
+release:
+  rules:
+    - if: $CI_COMMIT_TAG !=null
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:v0.4.0
+  
+  script:
+    - release-cli create --name "$CI_COMMIT_TAG" --description "Official Codeeditor Release" --tag-name "$CI_COMMIT_TAG" --ref $CI_COMMIT_SHA
+    
+  
+
+

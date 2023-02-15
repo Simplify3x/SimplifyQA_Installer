@@ -25,7 +25,7 @@ function startAgent() {
       else if (process.platform == 'win32') {
         location = path.join(rootPath, '/resources/com.simplifyQA.Agent.jar');
         // javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar', path.win32.normalize(currentPath.split("app.asar")[0] +'\\'+ 'resources\\'+'com.simplifyQA.Agent.jar')]);
-        javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar', 'resources/com.simplifyQA.Agent.jar']);
+        javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar', 'com.simplifyQA.Agent.jar']);
 
       }
 
@@ -114,7 +114,7 @@ app.whenReady().then(async () => {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Version : 2.0.56', type: 'normal', click: () => {
+      label: 'Version : 3.0.0', type: 'normal', click: () => {
       }
     }, {
       label: 'Release Notes', type: 'normal', click: () => {
@@ -153,19 +153,6 @@ app.whenReady().then(async () => {
   tray.focus();
   startFlag = true;
 
-
-
-  // var source = './resources/libs'
-  //     var destination = './hello/libs'
-  //     fs1.copy(source, destination, function (err) {
-  //       if (err){
-  //           console.log('An error occured while copying the folder.')
-  //           return console.error(err)
-  //       }
-  //       console.log('Copy completed!')
-  //   });
-     
-  // browsersocket.startserver();
   try {
     tray.displayBalloon();
   }

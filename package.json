@@ -1,9 +1,9 @@
 {
-  "name": "SimplifyQA",
-  "productName": "SimplifyQA",
-  "version": "1.0.0",
+  "name":"SqaAgent",
+  "productName": "SQA Agent",
+  "version": "3.0.0",
   "email": "rohan.kar@simplify3x.com",
-  "description": "SimplifyQA description",
+  "description": "SimplifyQA",
   "main": "main2.js",
   "scripts": {
     "start": "electron .",
@@ -20,17 +20,40 @@
   "build": {
     "appId": "SimplifyQA",
     "win": {
+      "icon": "./build/simplifylogo.ico",
       "publish": null,
       "target": [
         "nsis"
       ],
-      "icon": "simplifylogo.ico",
-      "extraResources": [
-        "./libs/**",
-        "com.simplifyQA.Agent.jar",
-        "./com.simplifyQA.Agent_lib/**",
-        "./codeEditorProjects/**",
-        "qa.png"
+      "extraFiles": [
+        {
+          "from": "com.simplifyQA.Agent.jar",
+          "to": ".",
+          "filter": [
+            "**/*"
+          ]
+        },
+        {
+          "from": "./libs",
+          "to": "./libs",
+          "filter": [
+            "**/*"
+          ]
+        },
+        {
+          "from": "./com.simplifyQA.Agent_lib",
+          "to": "./com.simplifyQA.Agent_lib",
+          "filter": [
+            "**/*"
+          ]
+        },
+        {
+          "from": "./codeEditorProjects",
+          "to": "./codeEditorProjects",
+          "filter": [
+            "**/*"
+          ]
+        }
       ]
     },
     "nsis": {
@@ -43,18 +66,21 @@
         "deb"
       ],
       "icon": "./libs/images/loader_1.png",
-      "extraResources": [
-        "./libs/**",
-        "com.simplifyQA.Agent.jar",
-        "./com.simplifyQA.Agent_lib/**",
-        "./codeEditorProjects/**"
+      "extraFiles": [
+        {
+          "from": "com.simplifyQA.Agent.jar",
+          "to": ".",
+          "filter": [
+            "**/*"
+          ]
+        }
       ],
       "category": "Graphics"
     },
     "afterPack": "./scripts/afterPackage.js",
     "files": []
   },
-  "author": "GitHub",
+  "author": "SimplifyQA",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^21.3.1",

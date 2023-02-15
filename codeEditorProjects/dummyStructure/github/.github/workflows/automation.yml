@@ -1,0 +1,74 @@
+name: Official Code Editor Jar Release
+on:
+  push:
+    tags:
+    - 'v*'
+jobs:
+    your_java_job_name:
+        name: Release Jar
+        runs-on : ubuntu-latest
+        steps:
+          - uses: actions/checkout@v2
+          - name: Set up JDK 1.8
+            uses: actions/setup-java@v1
+            with:
+              java-version: 1.8
+
+          - name: Set up Maven
+            uses: stCarolas/setup-maven@v4.2
+            with:
+              maven-version: 3.8.2
+
+          - name : install dependencies
+            run  : mvn install -X
+            
+           
+            
+          - name : works
+            run : touch staging.jar && cp target/*jar-with-dependencies.jar staging.jar
+
+          - name : upload folder
+            uses: actions/upload-artifact@v1
+            with:
+              name: Package
+              path: staging.jar
+
+          - name: Download a single artifact
+            uses: actions/download-artifact@v2
+            with:
+              name: Package
+
+
+          - name: Create Github Release
+            id : create_release 
+            uses: actions/create-release@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              tag_name: ${{ github.ref }}
+              release_name: Release ${{ github.ref }}
+
+          - name : Upload Jar to Github Release
+            uses: actions/upload-release-asset@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            with:
+              upload_url: ${{ steps.create_release.outputs.upload_url }} 
+              asset_path: staging.jar
+              asset_name: CodeEditor.jar
+              asset_content_type: application/jar
+
+          - name : Mail
+            uses : fjogeleit/http-request-action@master
+            with :
+              url  : "http://172.104.183.14:8799/email"
+              method : 'POST'
+              contentType: application/json
+              data : '{ "repository": "${{github.event.repository.full_name}}", "number": "${{github.event.number}}", "created_at": "${{github.event.pull_request.created_at}}", "updated_at": "${{github.event.pull_request.updated_at}}","email":"${{github.event.pusher.email}}","version":"${{github.ref_name}}","name":"${{github.event.pusher.name}}" }'
+              timeout : 20000
+
+          
+            
+          
+
