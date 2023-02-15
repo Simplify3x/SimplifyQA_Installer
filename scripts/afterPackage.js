@@ -18,6 +18,18 @@ exports.default = context => {
         }
       });
       break;
+
+    case 'win':
+      var source = './resources/libs'
+      var destination = './libs'
+      fs.copy(source, destination, function (err) {
+        if (err){
+            console.log('An error occured while copying the folder.')
+            return console.error(err)
+        }
+        console.log('Copy completed!')
+    });
+     
     default:
       break;
   }

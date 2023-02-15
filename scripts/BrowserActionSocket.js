@@ -108,3 +108,7 @@ app.post('/browserapi', function (req, res) {
     global.sharedThing.app.isQuiting = true;
   }
 });
+
+app.get('/restartapp', function (req, res) {
+      https.get("http://localhost:4012/restartnotification");
+});

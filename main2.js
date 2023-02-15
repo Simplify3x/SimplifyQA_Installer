@@ -1,6 +1,7 @@
 const { app, Menu, Tray, ipcMain } = require('electron');
 const { browsersocket } = require("./scripts/BrowserActionSocket.js")
 const fs = require('fs');
+const fs1 = require('fs-extra');
 const https = require('http');
 var kill = require('tree-kill');
 const path = require('path');
@@ -22,8 +23,9 @@ function startAgent() {
 
       }
       else if (process.platform == 'win32') {
-        location = path.join(rootPath, '/Resources/com.simplifyQA.Agent.jar');
-        javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar', path.win32.normalize(currentPath.split("app.asar")[0] +'\\'+ 'resources\\'+'com.simplifyQA.Agent.jar')]);
+        location = path.join(rootPath, '/resources/com.simplifyQA.Agent.jar');
+        // javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar', path.win32.normalize(currentPath.split("app.asar")[0] +'\\'+ 'resources\\'+'com.simplifyQA.Agent.jar')]);
+        javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar', 'resources/com.simplifyQA.Agent.jar']);
 
       }
 
@@ -52,13 +54,13 @@ function startAgent() {
 }
 
 function logdata(content) {
-  const location = path.join(rootPath, 'SqaAgent.log');
+  const location = path.join(rootPath, 'SqaAgent2.log');
   // Create appDataDir if not exist
   if (!fs.existsSync(rootPath)) {
     fs.mkdirSync(rootPath);
   }
 
-  const appDataFilePath = path.join(rootPath, 'SqaAgent.log');
+  const appDataFilePath = path.join(rootPath, 'SqaAgent2.log');
   content = JSON.stringify(content);
 
   fs.appendFile(appDataFilePath, "\n" + content, (err) => {
@@ -71,42 +73,6 @@ function logdata(content) {
   });
 }
 
-
-function getAppDataPath() {
-  switch (process.platform) {
-    case "darwin": {
-      return path.join(process.env.HOME);
-    }
-    case "win32": {
-      return path.join(process.env.APPDATA, "Your app name");
-    }
-    case "linux": {
-      return path.join(process.env.HOME, ".Your app name");
-    }
-    default: {
-      console.log("Unsupported platform!");
-      process.exit(1);
-    }
-  }
-}
-
-
-function Process() {
-  const process = require('child_process');
-  var ls = process.spawn('script.bat');
-  ls.stdout.on('data', function (data) {
-    console.log(data);
-  });
-  ls.stderr.on('data', function (data) {
-    console.log(data);
-  });
-  ls.on('close', function (code) {
-    if (code == 0)
-      console.log('Stop');
-    else
-      console.log('Start');
-  });
-};
 function startNotification() {
   try {
     console.log("---------------START notification for tray--------------------")
@@ -134,13 +100,16 @@ app.whenReady().then(async () => {
       process: javaProcess.pid,
       app: app,
     };
-  // tray = new Tray(__dirname + '\\resources\\'+'simplify logo.png')
+  
   // logdata("tray : "+ rootPath + "/Contents/Resources/libs/images/loader_1.png")
-  // tray = new Tray(path.join(rootPath, 'loader_2.png'))
+  // tray = new Tray(path.join(rootPath, 'resources/libs/images/loader_2.png'))
   if (process.platform == 'darwin') {
   tray = new Tray(path.join(rootPath, '/Contents/Resources/libs/images/loader_2.png'))
   }else if(process.platform=='win32'){
-    tray = new Tray(path.join(rootPath, '/Resources/libs/images/loader_2.png'))
+    logdata(path.join(rootPath, '/resources/libs/images/simplifylogo.ico'));
+    // tray = new Tray(path.join(rootPath, '/resources/libs/images/qa.png'))
+    tray = new Tray(__dirname + '\\resources\\'+'qa.png');
+    logdata("Tray :" + tray)
   }
 
   const contextMenu = Menu.buildFromTemplate([
@@ -183,6 +152,19 @@ app.whenReady().then(async () => {
   tray.setContextMenu(contextMenu)
   tray.focus();
   startFlag = true;
+
+
+
+  // var source = './resources/libs'
+  //     var destination = './hello/libs'
+  //     fs1.copy(source, destination, function (err) {
+  //       if (err){
+  //           console.log('An error occured while copying the folder.')
+  //           return console.error(err)
+  //       }
+  //       console.log('Copy completed!')
+  //   });
+     
   // browsersocket.startserver();
   try {
     tray.displayBalloon();
@@ -190,3 +172,4 @@ app.whenReady().then(async () => {
   catch { }
 }
 );
+
