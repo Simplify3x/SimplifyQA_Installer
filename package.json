@@ -1,13 +1,13 @@
 {
-  "name": "SimplifyQA",
-  "productName": "SimplifyQA",
-  "version": "1.0.0",
+  "name": "SqaAgent",
+  "productName": "SQA Agent",
+  "version": "3.0.0",
   "email": "rohan.kar@simplify3x.com",
-  "description": "SimplifyQA description",
+  "description": "SimplifyQA",
   "main": "main2.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder -mwl"
+    "build": "electron-builder"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -30,38 +30,10 @@
         "./com.simplifyQA.Agent_lib/**",
         "./codeEditorProjects/**"
       ],
-      "category": "public.app-category.utilities"
-    },
-    "win": {
-      "publish": null,
-      "target": [
-        "exe"
-      ],
-      "icon": "simplifylogo.ico",
-      "extraResources": [
-        "./libs/**",
-        "com.simplifyQA.Agent.jar",
-        "./com.simplifyQA.Agent_lib/**",
-        "./codeEditorProjects/**"
-      ]
-    },
-    "linux": {
-      "maintainer": "simplifyqa",
-      "target": [
-        "deb"
-      ],
-      "icon": "./libs/images/loader_1.png",
-      "extraResources": [
-        "./libs/**",
-        "com.simplifyQA.Agent.jar",
-        "./com.simplifyQA.Agent_lib/**",
-        "./codeEditorProjects/**"
-      ],
-      "category": "Graphics"
-    },
+      "category": "public.app-category.utilities"},
     "afterPack": "./scripts/afterPackage.js"
   },
-  "author": "GitHub",
+  "author": "SimplifyQA",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^21.3.1",

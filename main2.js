@@ -145,7 +145,7 @@ app.whenReady().then(async () => {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Version : 2.0.56', type: 'normal', click: () => {
+      label: 'Version : 3.0.0', type: 'normal', click: () => {
       }
     }, {
       label: 'Release Notes', type: 'normal', click: () => {
