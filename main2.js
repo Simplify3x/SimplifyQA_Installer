@@ -4,16 +4,23 @@ const fs = require('fs');
 const https = require('http');
 var kill = require('tree-kill');
 const path = require('path');
-const { shell } = require('electron')
+const { shell } = require('electron');
+const { contextIsolated } = require('process');
 let startFlag = false;
 let tray = null
 var javaProcess;
 const { spawn } = require("child_process", 'spawn');
-const rootPath = require('electron-root-path').rootPath;
+// const rootPath = require('electron-root-path').rootPath;
+
+const rootPath ="../../opt/SQA\ Agent/";
+
+const Linuxpath = path.join(rootPath,"JRE_1.8/bin/java")
 
 function startAgent() {
   return new Promise((resolve, reject) => {
     try {
+      console.log("root Path : "+rootPath);
+      console.log("Linux Path: "+Linuxpath);
       var location = null;
       if (process.platform == 'darwin') {
         logdata("started");
@@ -27,6 +34,12 @@ function startAgent() {
 
       }
 
+      else if (process.platform == 'linux') {
+        console.log("Reached inside running linux jar");
+
+        javaProcess = spawn(Linuxpath, ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar','../../opt/SQA\ Agent/com.simplifyQA.Agent.jar']);
+
+      }
 
       // const location = path.join(rootPath, 'com.simplifyQA.Agent.jar');
       // logdata(location);
@@ -45,6 +58,7 @@ function startAgent() {
       })
     }
     catch (err) {
+      console.log(err);
       logdata(err);
       reject();
     }
@@ -52,17 +66,18 @@ function startAgent() {
 }
 
 function logdata(content) {
-  const location = path.join(rootPath, 'SqaAgent.log');
+  const location = path.join('./SqaAgent.log');
   // Create appDataDir if not exist
   if (!fs.existsSync(rootPath)) {
     fs.mkdirSync(rootPath);
   }
 
-  const appDataFilePath = path.join(rootPath, 'SqaAgent.log');
+  const appDataFilePath = path.join('./SqaAgent.log');
   content = JSON.stringify(content);
 
   fs.appendFile(appDataFilePath, "\n" + content, (err) => {
     if (err) {
+      console.log(err);
       console.log("There was a problem saving data!");
       // console.log(err);
     } else {
@@ -141,6 +156,9 @@ app.whenReady().then(async () => {
   tray = new Tray(path.join(rootPath, '/Contents/Resources/libs/images/loader_2.png'))
   }else if(process.platform=='win32'){
     tray = new Tray(path.join(rootPath, '/Resources/libs/images/loader_2.png'))
+  }else if(process.platform=="linux"){
+    tray = new Tray(path.join('../../opt/SQA\ Agent/libs/images/loader.png'))
+
   }
 
   const contextMenu = Menu.buildFromTemplate([
@@ -159,7 +177,7 @@ app.whenReady().then(async () => {
         setTimeout(() => {
           startAgent();
           global.sharedThing.process=javaProcess.pid;
-        }, 1000);
+        }, 2000);
         setTimeout(() => {
           console.log("---------------start RESTART notification for tray--------------------")
           https.get("http://localhost:4012/restartnotification");

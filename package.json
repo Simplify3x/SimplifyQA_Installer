@@ -2,7 +2,8 @@
   "name": "SqaAgent",
   "productName": "SQA Agent",
   "version": "3.0.0",
-  "email": "rohan.kar@simplify3x.com",
+  "email": "info@simplify3x.com",
+  "author": "SimplifyQA <info@simplify3x.com>",
   "description": "SimplifyQA",
   "main": "main2.js",
   "scripts": {
@@ -19,18 +20,46 @@
   ],
   "build": {
     "appId": "SimplifyQA",
-    "mac": {
-      "target": [
-        "pkg"
-      ],
-      "icon": "simplifylogo.ico",
-      "extraResources": [
-        "./libs/**",
-        "com.simplifyQA.Agent.jar",
-        "./com.simplifyQA.Agent_lib/**",
-        "./codeEditorProjects/**"
-      ],
-      "category": "public.app-category.utilities"},
+    
+      "linux":{
+        "maintainer":"SimplifyQA",
+        "target":[
+          "deb",
+          "AppImage"
+        ],
+        "category":"Utility",
+        "icon": "agentlogo.png",
+        "extraFiles": [
+          {
+            "from": "com.simplifyQA.Agent.jar",
+            "to": ".",
+            "filter": [
+              "**/*"
+            ]
+          },
+          {
+            "from": "./libs",
+            "to": "./libs",
+            "filter": [
+              "**/*"
+            ]
+          },
+          {
+            "from": "./com.simplifyQA.Agent_lib",
+            "to": "./com.simplifyQA.Agent_lib",
+            "filter": [
+              "**/*"
+            ]
+          },
+          {
+            "from": "./JRE_1.8",
+            "to": "./JRE_1.8",
+            "filter": [
+              "**/*"
+            ]
+          }
+        ]
+      },
     "afterPack": "./scripts/afterPackage.js"
   },
   "author": "SimplifyQA",

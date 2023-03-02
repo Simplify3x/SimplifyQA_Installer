@@ -12,9 +12,12 @@ var javaProcess;
 var app;
 const https = require('http');
 const path = require('path');
-const rootPath = require('electron-root-path').rootPath;
+// const rootPath = require('electron-root-path').rootPath;
+const rootPath ="../../opt/SQA Agent/";
 const fs = require('fs');
 const { spawn } = require("child_process", 'spawn');
+const Linuxpath = path.join(rootPath,"JRE_1.8/bin/java")
+
 
 function startAgent() {
   return new Promise((resolve, reject) => {
@@ -28,6 +31,11 @@ function startAgent() {
       else if (process.platform == 'win32') {
         location = path.join(rootPath, 'Resources/com.simplifyQA.Agent.jar');
         javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar', path.win32.normalize(currentPath.split("app.asar")[0] +'\\'+ 'resources\\'+'com.simplifyQA.Agent.jar')]);
+
+      }
+      else if (process.platform == 'linux') {
+        location = path.join(rootPath, '/Resources/com.simplifyQA.Agent.jar');
+        javaProcess = spawn(Linuxpath, ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar',rootPath+'com.simplifyQA.Agent.jar']);
 
       }
       // const location = path.join(rootPath, 'com.simplifyQA.Agent.jar');
