@@ -1,15 +1,21 @@
 {
   "name": "SqaAgent",
-  "productName": "SQA Agent",
+  "productName": "SQA-Agent",
   "version": "3.0.0",
   "email": "rohan.kar@simplify3x.com",
   "description": "SimplifyQA",
   "main": "main2.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder"
+    "build": "electron-builder --publish always"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://s3.ap-south-1.amazonaws.com/agent.simplifyqa.app/mac",
+  "publish": {
+    "provider": "s3",
+    "bucket": "agent.simplifyqa.app",
+    "path": "mac/",
+    "region": "ap-south-1"
+  },
   "keywords": [
     "Electron",
     "quick",
@@ -21,16 +27,18 @@
     "appId": "SimplifyQA",
     "mac": {
       "target": [
-        "pkg"
+        "pkg",
+        "zip"
       ],
       "icon": "simplifylogo.ico",
       "extraResources": [
         "./libs/**",
         "com.simplifyQA.Agent.jar",
         "./com.simplifyQA.Agent_lib/**",
-        "./codeEditorProjects/**"
-      ],
-      "category": "public.app-category.utilities"},
+        "./codeEditorProjects/**",
+        "./JRE_1.8/**"
+      ]
+    },
     "afterPack": "./scripts/afterPackage.js"
   },
   "author": "SimplifyQA",
@@ -41,7 +49,9 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
+    "aws-sdk": "^2.1348.0",
     "cross-fetch": "^3.1.5",
+    "electron-log": "^5.0.0-beta.16",
     "electron-packager": "^17.1.1",
     "electron-root-path": "^1.1.0",
     "electron-updater": "^5.3.0",

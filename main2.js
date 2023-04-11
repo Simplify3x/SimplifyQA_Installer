@@ -1,4 +1,4 @@
-const { app, Menu, Tray, ipcMain } = require('electron');
+const { app, Menu, Tray, ipcMain,dialog} = require('electron');
 const { browsersocket } = require("./scripts/BrowserActionSocket.js")
 const fs = require('fs');
 const https = require('http');
@@ -9,7 +9,103 @@ let startFlag = false;
 let tray = null
 var javaProcess;
 const { spawn } = require("child_process", 'spawn');
-const rootPath = require('electron-root-path').rootPath;
+// const rootPath = require('electron-root-path').rootPath;
+const rootPath = "/Applications/SQA-Agent.app";
+const os = require('os');
+const macJavaPath="/Applications/SQA-Agent.app/Contents/Resources/JRE_1.8/Contents/Home/bin/java"
+const gotTheLock = app.requestSingleInstanceLock()
+console.log(process.execPath)
+
+const URL="https://simplifyqa.app"
+// const URL="https://demo.simplifyqa.app"
+
+
+//for creating config file
+if (!fs.existsSync(path.join(os.homedir()+ "/.config.properties"))) {
+fs.writeFile(path.join(os.homedir() + '/.config.properties'), 'url='+URL, function (err) {
+  if (err) throw err;
+  console.log('File is created successfully.');
+});
+}
+
+app.setAsDefaultProtocolClient("sqa","/Applications/SQA-Agent.app//Contents/MacOS/SQA-Agent");
+
+const log = require('electron-log');
+const { autoUpdater } = require('electron-updater');
+log.transports.file.level = 'info';
+log.transports.file.resolvePathFn = () => path.join(rootPath, '/update.log');
+
+
+const cacheDir = app.getPath('userData') + '/Caches/SQA-Agent';
+if (fs.existsSync(cacheDir)) {
+  // Delete the cache directory
+  try {
+    fs.rmdirSync(cacheDir, { recursive: true });
+    console.log(`Cache directory ${cacheDir} deleted`);
+  } catch (err) {
+    console.error(`Error deleting cache directory: ${err}`);
+  }
+}
+
+autoUpdater.setFeedURL('https://s3.ap-south-1.amazonaws.com/agent.simplifyqa.app/mac');
+
+
+autoUpdater.on('update-downloaded', function(event, releaseNotes, releaseName) {
+ // Show a dialog box asking the user if they want to install the update
+ dialog.showMessageBox({
+ type: 'question',
+ buttons: ['Install and Relaunch', 'Later'],
+ defaultId: 0,
+ message: `A new version of ${app.getName()} has been downloaded.`,
+ detail: `It will be installed the next time you restart the application.`
+}, function(response) {
+ if (response === 0) {
+ // Quit and install the update
+ autoUpdater.quitAndInstall();
+ }
+ });
+});
+
+autoUpdater.on('error', function(error) {
+  log.info(error);
+
+});
+
+// Listen for update checking event
+autoUpdater.on('checking-for-update', function() {
+  log.info('Checking for update...');
+  // dialog.showErrorBox('UPDATE AVAILABLE: ');
+});
+
+// Listen for update available event
+autoUpdater.on('update-available', function() {
+  log.info('update found');
+
+  // dialog.showErrorBox('UPDATE AVAILABLE 2: ');
+});
+
+
+// Listen for update not available event
+autoUpdater.on('update-not-available', function() {
+  log.info('Update not found');
+
+  // dialog.showErrorBox('UPDATE NOT AVAILABLE: ');
+});
+
+// Listen for download progress event
+autoUpdater.on('download-progress', function(progressObj) {
+  log.info('download in  progress');
+  // dialog.showErrorBox('UPDATE IN PROGRESS: ');
+ let log_message = "Download speed: " + progressObj.bytesPerSecond + ' - Downloaded ' + progressObj.percent + '%';
+// logdata("download in progress");
+});
+
+// Listen for update downloaded event
+autoUpdater.on('update-downloaded', function(event, releaseNotes, releaseName) {
+  log.info('update downloaded');
+  // dialog.showErrorBox('UPDATE DOWNLOADED ');
+});
+
 
 function startAgent() {
   return new Promise((resolve, reject) => {
@@ -18,7 +114,7 @@ function startAgent() {
       if (process.platform == 'darwin') {
         logdata("started");
         location = path.join(rootPath, '/Contents/Resources/com.simplifyQA.Agent.jar');
-        javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml', '-jar', location]);
+        javaProcess = spawn(macJavaPath, ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml', '-jar', location]);
 
       }
       else if (process.platform == 'win32') {
@@ -119,6 +215,8 @@ function startNotification() {
 
 
 app.whenReady().then(async () => {
+
+  autoUpdater.checkForUpdatesAndNotify();
   let pid = await startAgent();
   logdata("await added");
   setTimeout(() => {

@@ -15,6 +15,7 @@ const path = require('path');
 const rootPath = require('electron-root-path').rootPath;
 const fs = require('fs');
 const { spawn } = require("child_process", 'spawn');
+const macJavaPath="/Applications/SQA Agent.app/Contents/Resources/JRE_1.8/Contents/Home/bin/java"
 
 function startAgent() {
   return new Promise((resolve, reject) => {
@@ -22,7 +23,7 @@ function startAgent() {
       var location = null;
       if (process.platform == 'darwin') {
         location = path.join(rootPath, '/Contents/Resources/com.simplifyQA.Agent.jar');
-        javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml', '-jar', location]);
+        javaProcess = spawn(macJavaPath, ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml', '-jar', location]);
 
       }
       else if (process.platform == 'win32') {
