@@ -1,15 +1,22 @@
 {
-  "name":"SqaAgent",
-  "productName": "SQA Agent",
+  "name": "SqaAgent",
+  "productName": "SQA-Agent",
   "version": "3.0.0",
   "email": "rohan.kar@simplify3x.com",
   "description": "SimplifyQA",
-  "main": "main2.js",
+  "main": "main.js",
+  "generateUpdatesFilesForAllChannels": true,
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder "
+    "build": "electron-builder --publish always"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://s3.ap-south-1.amazonaws.com/agent.simplifyqa.app/windows",
+  "publish": {
+    "provider": "s3",
+    "bucket": "agent.simplifyqa.app",
+    "path": "windows/",
+    "region": "ap-south-1"
+  },
   "keywords": [
     "Electron",
     "quick",
@@ -53,6 +60,41 @@
           "filter": [
             "**/*"
           ]
+        },
+        {
+          "from": "./jre_1.8",
+          "to": "./jre_1.8",
+          "filter": [
+            "**/*"
+          ]
+        },
+        {
+          "from": "app-update.yml",
+          "to": "./resources/app-update.yml",
+          "filter": [
+            "**/*"
+          ]
+        },
+        {
+          "from": "index.html",
+          "to": "./resources/index.html",
+          "filter": [
+            "**/*"
+          ]
+        },
+        {
+          "from": "index.js",
+          "to": "./resources/index.js",
+          "filter": [
+            "**/*"
+          ]
+        },
+        {
+          "from": "./assets",
+          "to": "./resources/assets",
+          "filter": [
+            "**/*"
+          ]
         }
       ]
     },
@@ -78,25 +120,38 @@
       "category": "Graphics"
     },
     "afterPack": "./scripts/afterPackage.js",
-    "files": []
+    "files": [],
+    "protocols": {
+      "name": "foobar-protocol",
+      "schemes": [
+        "foobar"
+      ]
+    }
   },
   "author": "SimplifyQA",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^21.3.1",
-    "electron-builder": "^23.6.0"
+    "electron-builder": "^23.6.0",
+    "electron-winstaller": "^5.1.0"
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
     "cross-fetch": "^3.1.5",
+    "electron-is-dev": "^2.0.0",
+    "electron-log": "^5.0.0-beta.16",
     "electron-packager": "^17.1.1",
+    "electron-progressbar": "^2.0.1",
     "electron-root-path": "^1.1.0",
     "electron-updater": "^5.3.0",
     "express": "^4.18.2",
+    "find-free-port": "^2.0.0",
     "fs-extra": "^11.1.0",
     "node-fetch": "^1.7.3",
+    "properties-reader": "^2.2.0",
     "request": "^2.88.2",
     "socket.io": "^4.5.4",
+    "tcp-port-used": "^1.0.2",
     "tree-kill": "^1.2.2",
     "update-electron-app": "^2.0.1",
     "url-exist": "^3.0.1",
