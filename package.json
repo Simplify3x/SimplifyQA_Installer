@@ -1,7 +1,7 @@
 {
   "name": "SqaAgent",
   "productName": "SQA-Agent",
-  "version": "3.0.0",
+  "version": "3.0.3",
   "email": "rohan.kar@simplify3x.com",
   "description": "SimplifyQA",
   "main": "main.js",
@@ -29,6 +29,9 @@
     "win": {
       "icon": "./build/simplifylogo.ico",
       "publish": null,
+      "asarUnpack": [
+        "codeEditorProjects/*"
+      ],
       "target": [
         "nsis"
       ],

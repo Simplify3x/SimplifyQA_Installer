@@ -1,15 +1,17 @@
-const {Menu} = require('electron');
+const {Menu,MenuItem} = require('electron');
 const path = require('path');
 const https = require('http');
 const {newConfigWindow,closeWindow}=require("./env_window.js");
 var kill = require('tree-kill');
 const {startAgent}=require("./agentStart.js");
+const {logdata,setRootPath,resetFile}=require("./logging.js");
+
 
 
 function contextMenu(app,path){
 const context_menu=Menu.buildFromTemplate([
     {
-      label: 'Version : 3.0.0', type: 'normal', click: () => {
+      label: 'Version : 3.0.1', type: 'normal', click: () => {
       }
     }, {
       label: 'Release Notes', type: 'normal', click: () => {
@@ -18,7 +20,8 @@ const context_menu=Menu.buildFromTemplate([
     },
     {
       label: 'Restart', type: 'normal', click: () => {
-        kill(global.sharedThing.process)
+        kill(global.sharedThing.process);
+        resetFile();
         setTimeout(() => {
           startAgent(path);
         }, 1000);
@@ -48,6 +51,7 @@ const context_menu=Menu.buildFromTemplate([
     }
   ])
 
+  global.sharedThing.menu=context_menu;
   return context_menu;
 }
 
