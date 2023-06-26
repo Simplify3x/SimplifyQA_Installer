@@ -93,7 +93,8 @@ tcpPortUsed.check(5013, 'localhost')
 
     app.post('/browserapi', function (req, res) {
       if (req.body.data == "restart") {
-        process.kill(global.sharedThing.process)
+        process.kill(global.sharedThing.process);
+        killProcess();
         setTimeout(() => {
           startAgent();
           global.sharedThing.process = javaProcess.pid;
@@ -107,6 +108,7 @@ tcpPortUsed.check(5013, 'localhost')
         console.log(global.sharedThing.app);
         process.kill(global.sharedThing.process);
         global.sharedThing.app.quit();
+        killProcess();
         global.sharedThing.app.isQuiting = true;
       }
     });
@@ -173,6 +175,30 @@ function logdata(content) {
   });
 }
 
+async function killProcess(rootPath) {
+  return new Promise((resolve, reject) => {
+    try {
+      const chromedriver = spawn("Taskkill" ,["/IM", "chromedriver.exe", "/F"]);
+      const adb = spawn("Taskkill" ,["/IM", "adb.exe", "/F"]);
+    const runner = spawn("Taskkill" ,["/IM", "runner.exe", "/F"]);
+
+      console.log(javaProcess.stdout);
+      javaProcess.stdout.on('data', (data) => {
+        logdata(data.toString(), rootPath);
+
+        if (data.toString().includes("org.eclipse.jetty.server.Server - Started"))
+          resolve(javaProcess.pid);
+      })
+
+    }
+    catch (err) {
+      logdata(err, rootPath);
+      reject();
+    }
+  });
+
+
+}
 
 // server.listen(process.env.PORT || 5013, () => {
 //   console.log(`Server started on port ${server.address().port} :)`);

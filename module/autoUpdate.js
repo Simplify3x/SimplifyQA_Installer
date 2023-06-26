@@ -28,9 +28,17 @@ function agentupdate(app) {
         }, function (response) {
             if (response === 0) {
                 // Quit and install the update
-                autoUpdater.quitAndInstall();
-                app.relaunch();
-                app.quit();
+                // autoUpdater.quitAndInstall(false);
+                // app.relaunch();
+                // app.quit();
+                setImmediate(() => {
+                    logdata("inside setImmediate");
+                    app.removeAllListeners("window-all-closed")
+                    if (focusedWindow != null) {
+                      focusedWindow.close()
+                    }
+                    autoUpdater.quitAndInstall(true, true); 
+                })
             }
         });
     });

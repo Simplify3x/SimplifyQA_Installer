@@ -5,7 +5,7 @@ const { contextMenu } = require("./module/menu.js");
 const { logdata, setRootPath, resetFile } = require("./module/logging.js");
 const { agentupdate } = require("./module/autoUpdate.js");
 const { browsersocket } = require("./scripts/BrowserActionSocket.js");
-const { startAgent } = require("./module/agentStart.js");
+const { startAgent,killProcess } = require("./module/agentStart.js");
 const { DataCopy, GetUpdatedData } = require("./module/backup.js");
 
 const { app, Menu, Tray, ipcMain, protocol, dialog, BrowserWindow, MenuItem } = require('electron');
@@ -16,7 +16,7 @@ var kill = require('tree-kill');
 const path = require('path');
 
 let startFlag = false;
-let tray = null
+let tray = null;
 var javaProcess;
 const { spawn } = require("child_process", 'spawn');
 // const rootPath = require('electron-root-path').rootPath;
@@ -39,9 +39,21 @@ ipcMain.handle('cancel', async (event, ...args) => {
 
 //saving the file
 ipcMain.handle('save', async (event, ...args) => {
-  console.log(args[0]);
-  checkConfigFile(args);
-  closeWindow();
+
+  // check for VALID url
+  if (args[0].startsWith("http://") || args[0].startsWith("https://")) {
+    console.log(args[0]);
+    checkConfigFile(args);
+    closeWindow();
+  }
+
+  // if not show error message
+  else {
+    closeWindow();
+    dialog.showErrorBox('Error ', 'Enter A valid URL');
+
+
+  }
 
 })
 
@@ -126,12 +138,13 @@ else {
     startFlag = true;
     autoUpdater.checkForUpdatesAndNotify();
 
-    logdata("Before readExecutionUrl");
-    readExecutionUrl(app);
-    logdata("After readExecutionUrl");
+    // logdata("Before readExecutionUrl");
+    // readExecutionUrl(app);
+    // logdata("After readExecutionUrl");
     GetUpdatedData(app);
     logdata("GetUpdatedData method done");
     disconnectConnectJenkins();
+    // killProcess();
 
     try {
       tray.displayBalloon();

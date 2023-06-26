@@ -3,7 +3,7 @@ const path = require('path');
 const https = require('http');
 const {newConfigWindow,closeWindow}=require("./env_window.js");
 var kill = require('tree-kill');
-const {startAgent}=require("./agentStart.js");
+const {startAgent,killProcess}=require("./agentStart.js");
 const {logdata,setRootPath,resetFile}=require("./logging.js");
 
 
@@ -11,7 +11,7 @@ const {logdata,setRootPath,resetFile}=require("./logging.js");
 function contextMenu(app,path){
 const context_menu=Menu.buildFromTemplate([
     {
-      label: 'Version : 3.0.1', type: 'normal', click: () => {
+      label: 'Version : 3.0.4', type: 'normal', click: () => {
       }
     }, {
       label: 'Release Notes', type: 'normal', click: () => {
@@ -22,6 +22,7 @@ const context_menu=Menu.buildFromTemplate([
       label: 'Restart', type: 'normal', click: () => {
         kill(global.sharedThing.process);
         resetFile();
+        killProcess();
         setTimeout(() => {
           startAgent(path);
         }, 1000);
@@ -33,6 +34,7 @@ const context_menu=Menu.buildFromTemplate([
     },
     {
       label: 'Quit', type: 'normal', click: () => {
+        killProcess();
         console.log("---------------start STOP notification for tray--------------------")
         https.get("http://localhost:4012/stopnotification");
         // setTimeout(() => {
@@ -41,6 +43,8 @@ const context_menu=Menu.buildFromTemplate([
         app.isQuiting = true;
         process.kill(global.sharedThing.process);
         app.quit();
+        
+        
       }
     }, , {
 
