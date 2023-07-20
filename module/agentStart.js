@@ -23,7 +23,9 @@ async function startAgent(rootPath) {
         const windowsPath = path.join(rootPath, 'jre_1.8/bin/java');
         location = path.join(rootPath, 'com.simplifyQA.Agent.jar');
         // javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml','-jar', path.win32.normalize(currentPath.split("app.asar")[0] +'\\'+ 'resources\\'+'com.simplifyQA.Agent.jar')]);
-        javaProcess = spawn(windowsPath, ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml', '-jar', location, rootPath]);
+        // javaProcess = spawn(windowsPath, ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml', '-jar', location, rootPath]);
+        javaProcess = spawn(windowsPath, ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml', '-jar', location]);
+
         global.sharedThing.process = javaProcess.pid;
 
 

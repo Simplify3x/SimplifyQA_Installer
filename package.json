@@ -1,7 +1,7 @@
 {
   "name": "SqaAgent",
   "productName": "SQA-Agent",
-  "version": "3.0.4",
+  "version": "3.0.8",
   "email": "rohan.kar@simplify3x.com",
   "description": "SimplifyQA",
   "main": "main.js",
@@ -98,6 +98,13 @@
           "filter": [
             "**/*"
           ]
+        },
+        {
+          "from": "update-service.exe",
+          "to": ".",
+          "filter": [
+            "**/*"
+          ]
         }
       ]
     },
@@ -140,6 +147,7 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
+    "axios": "^1.4.0",
     "cross-fetch": "^3.1.5",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^5.0.0-beta.16",
@@ -150,7 +158,9 @@
     "express": "^4.18.2",
     "find-free-port": "^2.0.0",
     "fs-extra": "^11.1.0",
+    "logger": "^0.0.1",
     "node-fetch": "^1.7.3",
+    "progress": "^2.0.3",
     "properties-reader": "^2.2.0",
     "request": "^2.88.2",
     "socket.io": "^4.5.4",

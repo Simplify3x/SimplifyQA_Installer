@@ -8,17 +8,19 @@ const { browsersocket } = require("./scripts/BrowserActionSocket.js");
 const { startAgent,killProcess } = require("./module/agentStart.js");
 const { DataCopy, GetUpdatedData } = require("./module/backup.js");
 
+
+//application dependencies
 const { app, Menu, Tray, ipcMain, protocol, dialog, BrowserWindow, MenuItem } = require('electron');
 const fs = require('fs');
-
 const https = require('http');
 var kill = require('tree-kill');
 const path = require('path');
+const { spawn } = require("child_process", 'spawn');
+
 
 let startFlag = false;
 let tray = null;
 var javaProcess;
-const { spawn } = require("child_process", 'spawn');
 // const rootPath = require('electron-root-path').rootPath;
 const rootPath = path.join(app.getAppPath(), '..', '..');
 const windowsPath = path.join(rootPath, 'jre_1.8/bin/java');
@@ -68,7 +70,7 @@ app.setAsDefaultProtocolClient('sqa', path.join(applicationPath, 'SQA-Agent.exe'
 logdata("protocol added started", rootPath);
 
 //agent update check
-agentupdate(app);
+agentupdate(app,BrowserWindow);
 
 function restartApp() {
   app.relaunch();
@@ -133,7 +135,7 @@ else {
 
     console.log("ROOT PATH :" + rootPath)
     tray.setToolTip('Simplify3x')
-    tray.setContextMenu(contextMenu(app, rootPath))
+    tray.setContextMenu(contextMenu(app, rootPath,BrowserWindow))
     tray.focus();
     startFlag = true;
     autoUpdater.checkForUpdatesAndNotify();

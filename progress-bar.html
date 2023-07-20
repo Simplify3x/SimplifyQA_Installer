@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class=" popup-environment-parent">
+        <div class="eniv-set d-flex align-items-center justify-content-center">
+            <div class="progress-main">
+                <span class="qa-txt">
+                    QA is Updating!
+                </span>
+                <div class="progress mt-2 ">
+                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const {
+            ipcRenderer
+        } = require('electron');
+        // Listen for 'download-progress' event from the main process
+        ipcRenderer.on('download-progress', (event, progress) => {
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = `${progress * 100}%`;
+            progressBar.setAttribute('aria-valuenow', progress * 100);
+
+        });
+    </script>
+</body>
+<style>
+    .eniv-set {
+        width: 490px;
+        height: 190px;
+        background: #3e5978;
+        padding: 30px;
+        color: #ffff;
+        border-radius: 8px;
+        box-shadow: 6px 10px 23px grey;
+    }
+
+    .progress-main {
+        width: 100%;
+    }
+
+    .qa-txt {
+        font-weight: 600;
+        display: flex;
+        justify-content: center;
+        font-size: 16px;
+    }
+</style>
+
+</html>
