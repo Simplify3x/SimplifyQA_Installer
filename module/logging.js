@@ -20,7 +20,6 @@ function logdata(content) {
         console.log("There was a problem saving data!");
         rootPath = path.join(process.env.APPDATA, '..', 'Local','SQA-Agent');
         logdata(content);
-
         }
         // console.log(err);
       } else {
@@ -52,4 +51,4 @@ function setRootPath(PATH) {
 }
 
 
-module.exports = { logdata, setRootPath, resetFile }; 
+// module.exports = { logdata, setRootPath, resetFile }; 

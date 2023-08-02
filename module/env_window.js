@@ -32,7 +32,7 @@ function closeWindow() {
   window.hide();
 }
 
-function disconnectConnectJenkins() {
+function disconnectConnectJenkins(sqaAgent) {
 var myJSONObject = { "type": "connnectdisconnect" };
 request({
     url: "http://localhost:4012/v1/registerjenkin",
@@ -40,6 +40,7 @@ request({
     json: true,
     body: myJSONObject
 }, function (error, response, body){
+  sqaAgent.info("ENV : Response ");
     console.log(response);
 });
 

@@ -1,5 +1,5 @@
 const path = require('path');
-const { logdata } = require("./logging.js");
+// const { logdata } = require("./logging.js");
 const { spawn } = require("child_process", 'spawn');
 const { exec } = require("child_process");
 
@@ -7,12 +7,13 @@ const { exec } = require("child_process");
 
 var javaProcess;
 
-async function startAgent(rootPath) {
+async function startAgent(rootPath,sqaAgent) {
   return new Promise((resolve, reject) => {
     try {
       var location = null;
       if (process.platform == 'darwin') {
-        logdata("started", rootPath);
+       // logdata("started", rootPath);
+        sqaAgent.info("AGENT START.JS : Started ",rootPath);
         location = path.join(rootPath, '/Contents/Resources/com.simplifyQA.Agent.jar');
         javaProcess = spawn('java', ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5009', '-Dlogback.configurationFile=./libs/logback.xml', '-jar', location, rootPath]);
         global.sharedThing.process = javaProcess.pid;
@@ -35,15 +36,17 @@ async function startAgent(rootPath) {
 
       console.log(javaProcess.stdout);
       javaProcess.stdout.on('data', (data) => {
-        logdata(data.toString(), rootPath);
-
+        //logdata(data.toString(), rootPath);
+        sqaAgent.info("AGENT START.JS : ",data.toString(),rootPath);
         if (data.toString().includes("org.eclipse.jetty.server.Server - Started"))
           resolve(javaProcess.pid);
       })
 
     }
     catch (err) {
-      logdata(err, rootPath);
+      sqaAgent.info("AGENT START.JS ERROR : ",err,rootPath);
+      sqaAgent.error("AGENT START.JS ",err,rootPath);
+      //logdata(err, rootPath);
       reject();
     }
   });
@@ -52,24 +55,26 @@ async function startAgent(rootPath) {
 }
 
 
-async function killProcess(rootPath) {
+async function killProcess(rootPath,sqaAgent) {
   return new Promise((resolve, reject) => {
     try {
       const chromedriver = spawn("Taskkill" ,["/IM", "chromedriver.exe", "/F"]);
       const adb = spawn("Taskkill" ,["/IM", "adb.exe", "/F"]);
-    const runner = spawn("Taskkill" ,["/IM", "runner.exe", "/F"]);
+      const runner = spawn("Taskkill" ,["/IM", "runner.exe", "/F"]);
 
       console.log(javaProcess.stdout);
       javaProcess.stdout.on('data', (data) => {
-        logdata(data.toString(), rootPath);
-
+        //logdata(data.toString(), rootPath);
+        sqaAgent.info("AGENT START.JS : Kill process ",data.toString(),rootPath);
         if (data.toString().includes("org.eclipse.jetty.server.Server - Started"))
           resolve(javaProcess.pid);
       })
 
     }
     catch (err) {
-      logdata(err, rootPath);
+      //logdata(err, rootPath);
+      sqaAgent.info("AGENT START.JS ERROR : ",err,rootPath);
+      sqaAgent.error("AGENT START.JS ",err,rootPath);
       reject();
     }
   });

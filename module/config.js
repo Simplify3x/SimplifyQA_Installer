@@ -7,15 +7,18 @@ var PropertiesReader = require('properties-reader');
 var URL;
 
 
-function checkConfigFile(args){
+function checkConfigFile(args,sqaAgent){
     if (fs.existsSync(configFilePath)) {
         console.log("file present");
+        sqaAgent.info("CONFIG : Config file present");
         var properties = PropertiesReader(configFilePath);
         properties.set("url", args[0]);
         properties.save(configFilePath, function then(err, data) {
           if (err) {
+            sqaAgent.info("CONFIG : Error while writing properties file ",err);
               console.log("error in write a properties file")
           }
+          sqaAgent.info("CONFIG : Saved data to properties file");
           console.log("saved data to properties file")
       });
       }else{
@@ -24,9 +27,11 @@ function checkConfigFile(args){
         properties.set("url", args[0]);
         properties.save(configFilePath, function then(err, data) {
           if (err) {
+              sqaAgent.info("CONFIG : Error while writing properties file ",err);
               console.log("error in write a properties file")
           }
-          console.log("saved data to properties file")
+          sqaAgent.info("CONFIG : Saved data to properties file");
+          console.log("saved data to properties file");
       });
       }
 }
